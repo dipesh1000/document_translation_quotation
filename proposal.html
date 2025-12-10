@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Translation Management Platform - Proposal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .plan {
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 30px;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .plan:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .plan.recommended {
+            border-color: #667eea;
+            border-width: 4px;
+            transform: scale(1.05);
+        }
+
+        .plan.recommended::before {
+            content: "⭐ RECOMMENDED";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .plan-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: #999;
+            font-weight: 400;
+        }
+
+        .plan-timeline {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .plan-features li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .plan-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .plan-features li.excluded {
+            color: #ccc;
+            text-decoration: line-through;
+        }
+
+        .plan-features li.excluded::before {
+            content: "✗";
+            color: #ccc;
+        }
+
+        .plan-button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .plan-button:hover {
+            background: #5568d3;
+            transform: scale(1.02);
+        }
+
+        .plan.recommended .plan-button {
+            background: #764ba2;
+        }
+
+        .plan.recommended .plan-button:hover {
+            background: #653a8a;
+        }
+
+        .comparison {
+            margin: 50px 0;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .comparison h2 {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .check {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .cross {
+            color: #ccc;
+            font-weight: bold;
+        }
+
+        .why-choose {
+            margin: 50px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+        }
+
+        .why-choose h2 {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .benefit {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .benefit h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .benefit p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .contact {
+            text-align: center;
+            padding: 40px 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 15px;
+            margin-top: 50px;
+        }
+
+        .contact h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .contact-info {
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+
+        .contact-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .plan.recommended {
+                transform: scale(1);
+            }
+
+            .plans {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 0.85rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px 5px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .plan-price {
+                font-size: 1.8rem;
+            }
+
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Document Translation Management Platform</h1>
+            <p>Complete Web Development Proposal</p>
+        </div>
+
+        <div class="content">
+            <div class="intro">
+                <h2>Transform Your Translation Workflow</h2>
+                <p>Choose from three comprehensive web development packages designed to automate your translation operations, reduce manual work, and scale your business efficiently.</p>
+            </div>
+
+            <div class="plans">
+                <!-- Starter Plan -->
+                <div class="plan">
+                    <div class="plan-header">
+                        <div class="plan-title">Starter Plan</div>
+                        <div class="plan-price">AED 18,900<span>/one-time</span></div>
+                        <div class="plan-timeline">📅 4-6 weeks delivery</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>Document intake form & file uploads</li>
+                        <li>Customer dashboard</li>
+                        <li>Translator assignment workflow</li>
+                        <li>Delivery system</li>
+                        <li>Basic admin panel</li>
+                        <li>Email notifications</li>
+                        <li>Status tracking</li>
+                        <li class="excluded">WhatsApp automation</li>
+                        <li class="excluded">Payment gateway</li>
+                        <li class="excluded">Advanced analytics</li>
+                    </ul>
+                    <button class="plan-button">Choose Starter</button>
+                </div>
+
+                <!-- Recommended Plan -->
+                <div class="plan recommended">
+                    <div class="plan-header">
+                        <div class="plan-title">Recommended Plan</div>
+                        <div class="plan-price">AED 29,380<span>/one-time</span></div>
+                        <div class="plan-timeline">📅 6-8 weeks delivery</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>All Starter features included</li>
+                        <li>WhatsApp automation</li>
+                        <li>Email automation with templates</li>
+                        <li>Dedicated translator dashboard</li>
+                        <li>Advanced admin analytics</li>
+                        <li>60-70% automation</li>
+                        <li>3-4 month ROI payback</li>
+                        <li class="excluded">Payment gateway</li>
+                        <li class="excluded">AI translation engine</li>
+                        <li class="excluded">Translation memory</li>
+                        <li class="excluded">Vendor marketplace</li>
+                    </ul>
+                    <button class="plan-button">Choose Recommended</button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="plan">
+                    <div class="plan-header">
+                        <div class="plan-title">Enterprise Plan</div>
+                        <div class="plan-price">AED 50K-60K<span>/one-time</span></div>
+                        <div class="plan-timeline">📅 10-14 weeks delivery</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>All Recommended features</li>
+                        <li>Payment gateway integration</li>
+                        <li>AI translation suggestion engine</li>
+                        <li>Translation memory system</li>
+                        <li>OCR text extraction</li>
+                        <li>Multilingual chatbot</li>
+                        <li>Vendor marketplace</li>
+                        <li>Advanced reporting & BI</li>
+                        <li>Team management system</li>
+                        <li>90%+ automation</li>
+                        <li>Enterprise security & compliance</li>
+                        <li>Unlimited scalability</li>
+                        <li>24/7 priority support</li>
+                    </ul>
+                    <button class="plan-button">Choose Enterprise</button>
+                </div>
+            </div>
+
+            <div class="comparison">
+                <h2>Quick Comparison</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Starter</th>
+                            <th>Recommended</th>
+                            <th>Enterprise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Automation Level</strong></td>
+                            <td>30-40%</td>
+                            <td><strong>60-70%</strong></td>
+                            <td>90%+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>WhatsApp Integration</strong></td>
+                            <td class="cross">✗</td>
+                            <td class="check">✓</td>
+                            <td class="check">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Gateway</strong></td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                            <td class="check">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AI Features</strong></td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                            <td class="check">✓ Advanced</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Translation Memory</strong></td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                            <td class="check">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vendor Marketplace</strong></td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                            <td class="check">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monthly API Costs</strong></td>
+                            <td>AED 200-500</td>
+                            <td>AED 1,000-2,000</td>
+                            <td>AED 6,600-12,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best For</strong></td>
+                            <td>Small businesses</td>
+                            <td><strong>Growing businesses</strong></td>
+                            <td>Large organizations</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="why-choose">
+                <h2>Why Choose Our Platform?</h2>
+                <div class="benefits">
+                    <div class="benefit">
+                        <div class="benefit-icon">⚡</div>
+                        <h3>Fast Development</h3>
+                        <p>Ready in 4-14 weeks depending on plan</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">💰</div>
+                        <h3>Excellent ROI</h3>
+                        <p>3-4 month payback period (Recommended)</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">📱</div>
+                        <h3>Mobile-Friendly</h3>
+                        <p>Works perfectly on all devices</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">🔒</div>
+                        <h3>Secure & Reliable</h3>
+                        <p>Enterprise-grade security</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">📈</div>
+                        <h3>Scalable</h3>
+                        <p>Grows with your business</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">🛠️</div>
+                        <h3>Full Support</h3>
+                        <p>Training & ongoing assistance</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact">
+                <h2>Ready to Get Started?</h2>
+                <p class="contact-info">📧 Email: [Your Email Address]</p>
+                <p class="contact-info">📱 Phone: [Your Phone Number]</p>
+                <p class="contact-info">🌐 Website: [Your Website]</p>
+                <a href="mailto:your@email.com" class="contact-button">Contact Us Now</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
